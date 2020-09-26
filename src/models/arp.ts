@@ -1,15 +1,21 @@
 import { ByteField, FieldDefinition, FieldType } from "../util/fixed-width-util";
+import { Packet } from "./packet";
 
-export interface ARPPacket {
+export interface ARP {
     hardwareType: Uint8Array;
     protocolType: Uint8Array;
     hardwareAddrLength: number;
     protocolAddrLength: number;
-    operation: number;
+    operation: ARP_OPERATION;
     senderHardwareAddr: Uint8Array
     senderProtocolAddr: Uint8Array
     targetHardwareAddr: Uint8Array
     targetProtocolAddr: Uint8Array
+}
+
+export enum ARP_OPERATION {
+    REQUEST = 1,
+    REPLY = 2
 }
 
 export const ARP_PACKET_DEFINITION: FieldDefinition[] = [
@@ -46,8 +52,10 @@ export const ARP_PACKET_DEFINITION: FieldDefinition[] = [
         "hardwareAddrLength"
     ),
     new ByteField(
-        "protocolHardwareAddr",
+        "targetProtocolAddr",
         "calculated",
         "protocolAddrLength"
     )
 ]
+
+export const ARPPacket = new Packet<ARP>(ARP_PACKET_DEFINITION);

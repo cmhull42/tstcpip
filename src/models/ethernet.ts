@@ -1,27 +1,21 @@
 import { MACAddress } from "../network/link-layer/network-interface";
 import { isEqual } from "../util/byte-util";
-import { serialize, deserialize, ByteField, FieldDefinition, FieldType } from "../util/fixed-width-util";
+import { ByteField, FieldDefinition, FieldType } from "../util/fixed-width-util";
+import { Packet } from "./packet";
 
 export interface Ethernet {
     preamble: Uint8Array
     startFrameDelimiter: number,
     macDestination: MACAddress,
     macSource: MACAddress,
-    payloadLength: number,
-    payload: Uint8Array,
-    frameCheckSequence: FrameCheckSequence,
-    idleGap: Uint8Array
+    etherType: EtherType
 }
 
-export class EthernetPacket {
-
-    static toWireFormat(obj: Ethernet): Uint8Array {
-        return serialize(obj, PACKET_DEFINITION);
-    }
-
-    static toModel(data: Uint8Array): Ethernet {
-        return deserialize(data, PACKET_DEFINITION);
-    }
+export enum EtherType {
+    IPV4 = 0x0800,
+    ARP = 0x0806,
+    VLAN_TAG = 0x8100,
+    IPV6 = 0x86DD
 }
 
 export const PACKET_DEFINITION: FieldDefinition[] = [
@@ -41,28 +35,21 @@ export const PACKET_DEFINITION: FieldDefinition[] = [
         fieldType: FieldType.BYTES,
         widthBytes: 6
     },
-    { // TODO: implement 802.1Q, 802.1ad, Jumbo frames
-        name: "payloadLength",
+    {
+        name: "etherType",
         fieldType: FieldType.UNSIGNED_NUMBER,
         widthBytes: 2
-    },
-    {
-        name: "payload",
-        fieldType: FieldType.BYTES,
-        widthBytes: "calculated",
-        widthField: "payloadLength"
-    },
-    {
-        name: "frameCheckSequence",
-        fieldType: FieldType.BYTES,
-        widthBytes: 4
-    },
-    {
-        name: "idleGap",
-        fieldType: FieldType.BYTES,
-        widthBytes: 12
     }
 ]
+class _EthernetPacket extends Packet<Ethernet> {
+    getWidth() {
+        return this.definition.reduce((prev, curr) =>
+                prev + (curr.widthBytes as number)
+        , 0)
+    }
+}
+
+export const EthernetHeader = new _EthernetPacket(PACKET_DEFINITION);
 
 export type FrameCheckSequence = Uint8Array;
 
