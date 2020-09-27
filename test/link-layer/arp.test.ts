@@ -1,11 +1,12 @@
-import { report } from "process";
 import { ARP, ARPPacket, ARP_OPERATION } from "../../src/models/arp";
 import { ArpService } from "../../src/network/link-layer/arp";
+import { NICType } from "../../src/network/link-layer/network-interface";
 
 const mockBroadcast = jest.fn();
 const mockSend = jest.fn();
 const mockRegister = jest.fn();
-const NIC: any = {
+const mockNIC: any = {
+    nicType: NICType.ETHERNET,
     hardwareAddr: new Uint8Array([0x0A, 0x00, 0x00, 0x00, 0x00, 0x01]),
     broadcast: mockBroadcast,
     register: mockRegister,
@@ -15,7 +16,7 @@ const NIC: any = {
 describe("ARP service", () => {
     describe("Probe", () => {
         it("returns true when no response", async () => {
-            const arpService = new ArpService(NIC, new Uint8Array([10, 0, 0, 1]));
+            const arpService = new ArpService(mockNIC, new Uint8Array([10, 0, 0, 1]));
 
             const result = await arpService.probe(new Uint8Array([10, 0, 0, 1]));
 
@@ -31,8 +32,8 @@ describe("ARP service", () => {
                 callback = c;
             });
 
-            const arpService = new ArpService(NIC, new Uint8Array([10, 0, 0, 1]));
-            NIC.register(0x0806, arpService.receive);
+            const arpService = new ArpService(mockNIC, new Uint8Array([10, 0, 0, 1]));
+            mockNIC.register(0x0806, arpService.receive);
 
             const desiredAddress = new Uint8Array([10, 0, 0, 1]);
             const promise =  arpService.probe(desiredAddress);

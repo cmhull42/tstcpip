@@ -1,14 +1,12 @@
 import { ARP, ARPPacket, ARP_OPERATION } from "../../models/arp";
 import * as ip from "../../models/ip";
 import { isEqual } from "../../util/byte-util";
-import { MACAddress, NIC } from "./network-interface";
+import { MACAddress, NIC, NICType } from "./network-interface";
 
 
 export class ArpService {
-    arpHeader = {
-        hardwareType: new Uint8Array([0x00, 0x01]), // TODO support stuff other than ethernet
-        protocolType: new Uint8Array([0x08, 0x00]), // ipv4 only but v6 uses NDP not arp
-    }
+    hardwareType: Uint8Array;
+    protocolType = new Uint8Array([0x08, 0x00]);
     protocolAddr: ip.IPV4Address;
     nic: NIC;
     ARP_PROTOCOL_SPECIFIER = 0x0806;
@@ -17,6 +15,16 @@ export class ArpService {
     constructor(nic: NIC, protocolAddress: ip.IPV4Address) {
         this.nic = nic;
         this.protocolAddr = protocolAddress;
+        this.hardwareType = this.getHardwareType(this.nic.nicType);
+        this.nic.register(this.ARP_PROTOCOL_SPECIFIER, this.receive.bind(this));
+    }
+
+
+    private getHardwareType(nicType: NICType) {
+        switch(nicType) {
+            case NICType.ETHERNET:
+                return new Uint8Array([0x00, 0x01]);
+        }
     }
 
     public async probe(desiredAddress: ip.IPV4Address): Promise<boolean> {
@@ -35,7 +43,8 @@ export class ArpService {
 
     private async send_request(target: ip.IPV4Address, sender: ip.IPV4Address, timeout: number): Promise<ARP> {
         const model: ARP = {
-            ...this.arpHeader,
+            hardwareType: this.hardwareType,
+            protocolType: this.protocolType,
             protocolAddrLength: this.protocolAddr.byteLength,
             hardwareAddrLength: this.nic.hardwareAddr.byteLength,
             operation: ARP_OPERATION.REQUEST,
@@ -44,12 +53,13 @@ export class ArpService {
             targetHardwareAddr: new Uint8Array(Array(this.nic.hardwareAddr.byteLength).fill(0x00)),
             targetProtocolAddr: target
         };
-
-        this.nic.broadcast(ARPPacket.toWireFormat(model), this.ARP_PROTOCOL_SPECIFIER);
         const waiter = new Promise<ARP>((res, rej) => {
             this.requestQueue.set(ip.toString(target), res);
             setTimeout(() => rej(), timeout);
         });
+
+        this.nic.broadcast(ARPPacket.toWireFormat(model), this.ARP_PROTOCOL_SPECIFIER);
+
         return waiter;
     }
 
@@ -60,7 +70,8 @@ export class ArpService {
 
     public reply(targetProtocolAddr: ip.IPV4Address, targetHardwareAddr: Uint8Array) {
         const model: ARP = {
-            ...this.arpHeader,
+            hardwareType: this.hardwareType,
+            protocolType: this.protocolType,
             protocolAddrLength: this.protocolAddr.byteLength,
             hardwareAddrLength: this.nic.hardwareAddr.byteLength,
             operation: ARP_OPERATION.REPLY,

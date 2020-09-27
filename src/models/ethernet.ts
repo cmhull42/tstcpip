@@ -59,7 +59,7 @@ const IDLE_FRAME_GAP = new Uint8Array(Array(12).fill(0x00))
 
 
 function isMACBroadcast(addr: MACAddress) {
-    return isEqual(addr, new Uint8Array([0xFF, 0xFF, 0xFF, 0xFF, 0xFF]));
+    return isEqual(addr, new Uint8Array([0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]));
 }
 
 function isMACMulticast(addr: MACAddress) {

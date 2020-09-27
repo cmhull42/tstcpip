@@ -1,6 +1,7 @@
 import { Connectable, Link } from "./link"
 
 export interface NIC extends Connectable {
+    nicType: NICType;
     link: Link;
     hardwareAddr: MACAddress;
 
@@ -8,6 +9,10 @@ export interface NIC extends Connectable {
     broadcast: (payload: Payload, protocol: number) => void;
     receive: (payload: Payload) => void;
     register: (protocol: number, interrupt: PacketInterrupt) => void;
+}
+
+export enum NICType {
+    ETHERNET
 }
 
 export type PacketInterrupt = (payload: Payload) => void;

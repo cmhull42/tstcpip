@@ -1,4 +1,5 @@
 import {TextDecoder, TextEncoder} from "util";
+import { bytesToUnsignedNumber, unsignedNumberToBytes } from "./byte-util";
 
 export enum FieldType {
     BYTES,
@@ -113,34 +114,6 @@ function serializeField(data: any, def: FieldDefinition, defs: FieldDefinition[]
             return new TextEncoder().encode(data[def.name]);
         default:
             throw new Error(`Encountered a fieldtype ${def.fieldType} that is not implemented`)
-    }
-}
-
-function bytesToUnsignedNumber(data: Uint8Array): number {
-    const buffer = Buffer.from(data);
-    switch (data.byteLength) {
-        case 1:
-            return buffer.readUInt8();
-        case 2:
-            return buffer.readUInt16BE();
-        case 4:
-            return buffer.readUInt32BE();
-    }
-}
-
-function unsignedNumberToBytes(num: number, width: number): Uint8Array {
-    const buff = Buffer.alloc(width);
-
-    switch (width) {
-        case 1:
-            buff.writeUInt8(num);
-            return buff
-        case 2:
-            buff.writeUInt16BE(num);
-            return buff;
-        case 4:
-            buff.writeUInt32BE(num);
-            return buff;
     }
 }
 

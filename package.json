@@ -12,10 +12,12 @@
         "test": "jest"
     },
     "dependencies": {
-        "@types/crc": "^3.4.0",
-        "crc": "^3.8.0"
+        "crc": "^3.8.0",
+        "lru-cache": "^6.0.0"
     },
     "devDependencies": {
+        "@types/crc": "^3.4.0",
+        "@types/lru-cache": "^5.1.0",
         "@types/node": "^14.11.1",
         "jest": "^26.4.2",
         "ts-jest": "^26.3.0",

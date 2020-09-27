@@ -2,9 +2,10 @@ import { crc32 } from "crc";
 import ethernet, { Ethernet, EthernetHeader, EtherType } from "../../models/ethernet";
 import { isEqual } from "../../util/byte-util";
 import { Link } from "./link";
-import { MACAddress, NIC, PacketInterrupt, Payload } from "./network-interface";
+import { MACAddress, NIC, NICType, PacketInterrupt, Payload } from "./network-interface";
 
 export class EthernetNIC implements NIC {
+    nicType = NICType.ETHERNET;
     link: Link;
     hardwareAddr: MACAddress;
     promiscuousMode: boolean = false;
