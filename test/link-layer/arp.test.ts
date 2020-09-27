@@ -1,4 +1,4 @@
-import { ARP, ARPPacket, ARP_OPERATION } from "../../src/models/arp";
+import { ARP, ARPPacket, ARP_OPERATION } from "../../src/models/link-layer/arp";
 import { ArpService } from "../../src/network/link-layer/arp";
 import { NICType } from "../../src/network/link-layer/network-interface";
 

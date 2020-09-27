@@ -1,5 +1,5 @@
-import { ARP, ARPPacket, ARP_OPERATION } from "../../models/arp";
-import * as ip from "../../models/ip";
+import { ARP, ARPPacket, ARP_OPERATION } from "../../models/link-layer/arp";
+import * as ip from "../../models/internet-layer/ip";
 import { isEqual } from "../../util/byte-util";
 import { MACAddress, NIC, NICType } from "./network-interface";
 

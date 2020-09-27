@@ -1,5 +1,5 @@
-import { EtherType } from "../../models/ethernet";
-import * as ip from "../../models/ip";
+import { EtherType } from "../../models/link-layer/ethernet";
+import * as ip from "../../models/internet-layer/ip";
 import { unsignedNumberToBytes } from "../../util/byte-util";
 import { ArpService } from "../link-layer/arp";
 import { MACAddress, NIC } from "../link-layer/network-interface";

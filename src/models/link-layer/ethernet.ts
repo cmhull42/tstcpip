@@ -1,7 +1,7 @@
-import { MACAddress } from "../network/link-layer/network-interface";
-import { isEqual } from "../util/byte-util";
-import { ByteField, FieldDefinition, FieldType } from "../util/fixed-width-util";
-import { Packet } from "./packet";
+import { MACAddress } from "../../network/link-layer/network-interface";
+import { isEqual } from "../../util/byte-util";
+import { ByteField, FieldDefinition, FieldType } from "../../util/fixed-width-util";
+import { Packet } from "../packet";
 
 export interface Ethernet {
     preamble: Uint8Array

@@ -1,4 +1,4 @@
-import { IPV4Header } from "../../src/models/ip";
+import { IPV4Header } from "../../src/models/internet-layer/ip";
 import { Ipv4Protocol } from "../../src/network/internet-layer/ipv4"
 import { EthernetNIC } from "../../src/network/link-layer/ethernet"
 

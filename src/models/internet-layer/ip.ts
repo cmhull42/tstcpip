@@ -1,6 +1,6 @@
-import { bytesToUnsignedNumber } from "../util/byte-util";
-import { FieldDefinition, FieldType } from "../util/fixed-width-util";
-import { Packet } from "./packet";
+import { bytesToUnsignedNumber } from "../../util/byte-util";
+import { FieldDefinition, FieldType } from "../../util/fixed-width-util";
+import { Packet } from "../packet";
 
 export type ProtocolAddress = Uint8Array;
 export type IPV4Address = ProtocolAddress;

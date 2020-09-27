@@ -1,5 +1,5 @@
-import { ByteField, FieldDefinition, FieldType } from "../util/fixed-width-util";
-import { Packet } from "./packet";
+import { ByteField, FieldDefinition, FieldType } from "../../util/fixed-width-util";
+import { Packet } from "../packet";
 
 export interface ARP {
     hardwareType: Uint8Array;
