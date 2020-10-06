@@ -1,6 +1,6 @@
-import { Connectable, Link } from "./link"
+import { Link } from "./link"
 
-export interface NIC extends Connectable {
+export interface NIC {
     nicType: NICType;
     link: Link;
     hardwareAddr: MACAddress;

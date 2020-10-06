@@ -1,5 +1,6 @@
 import { EthernetNIC } from "../../src/network/link-layer/ethernet"
 import { TextDecoder } from "util";
+import { InternalLink } from "../../src/network/link-layer/link";
 describe("Ethernet protocol", () => {
 
     it("Can receive correctly addressed packets", () => {
@@ -12,9 +13,12 @@ describe("Ethernet protocol", () => {
         const mac1 = new Uint8Array([0x0A, 0x00, 0x00, 0x00, 0x00, 0x01]);
         const mac2 = new Uint8Array([0x0A, 0x00, 0x00, 0x00, 0x00, 0x02]);
 
-        const nic1 = new EthernetNIC(mac1);
+        const link1 = new InternalLink();
+        const link2 = new InternalLink();
+
+        const nic1 = new EthernetNIC(mac1, link1);
         nic1.register(0x01, int1Receive);
-        const nic2 = new EthernetNIC(mac2);
+        const nic2 = new EthernetNIC(mac2, link2);
         nic2.register(0x01, int2Receive);
 
         int2Receive.mockImplementation((data: Uint8Array) => {
@@ -26,7 +30,7 @@ describe("Ethernet protocol", () => {
             expect(new TextDecoder().decode(data)).toBe(MESSAGE2);
         })
 
-        nic1.connect(nic2);
+        link1.connect(link2);
 
         nic1.send(mac2, Buffer.from(MESSAGE1), 0x01);
     });
@@ -41,9 +45,12 @@ describe("Ethernet protocol", () => {
         const mac1 = new Uint8Array([0x0A, 0x00, 0x00, 0x00, 0x00, 0x01]);
         const mac2 = new Uint8Array([0x0A, 0x00, 0x00, 0x00, 0x00, 0x02]);
 
-        const nic1 = new EthernetNIC(mac1);
+        const link1 = new InternalLink();
+        const link2 = new InternalLink();
+
+        const nic1 = new EthernetNIC(mac1, link1);
         nic1.register(0x01, int1Receive);
-        const nic2 = new EthernetNIC(mac2);
+        const nic2 = new EthernetNIC(mac2, link2);
         nic2.register(0x01, int2Receive);
 
         int2Receive.mockImplementation((data: Uint8Array) => {
@@ -55,7 +62,7 @@ describe("Ethernet protocol", () => {
             expect(new TextDecoder().decode(data)).toBe(MESSAGE2);
         })
 
-        nic1.connect(nic2);
+        link1.connect(link2);
 
         nic1.broadcast(Buffer.from(MESSAGE1), 0x01);
 

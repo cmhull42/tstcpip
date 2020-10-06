@@ -11,20 +11,15 @@ export class EthernetNIC implements NIC {
     promiscuousMode: boolean = false;
     interrupts = new Map<number, PacketInterrupt>();
 
-    constructor(hardwareAddr: MACAddress) {
+    constructor(hardwareAddr: MACAddress, link: Link) {
         this.hardwareAddr = hardwareAddr;
 
-        this.link = new Link((data, link) => {
-            this.receive(data);
-        });
+        this.link = link;
+        link.register(this.receive.bind(this));
     }
 
     public setPromiscuousMode(mode: boolean) {
         this.promiscuousMode = mode;
-    }
-
-    public connect(nic: EthernetNIC) {
-        this.link.connect(nic);
     }
 
     public send(destination: MACAddress, data: Payload, protocol: EtherType) {

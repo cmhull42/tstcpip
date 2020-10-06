@@ -1,29 +1,25 @@
 
+export type LinkCallback = (data: Uint8Array) => any;
 
-export interface Connectable {
-    link: Link;
-    connect: (connectable: Connectable) => void;
+export interface Link {
+    send: (data: Uint8Array) => Promise<void> | void;
+    register: (callback: LinkCallback) => void;
 }
 
-export class Link implements Connectable {
-    link: Link;
-    onReceive: (data: Uint8Array, link: Link) => void;
+export class InternalLink implements Link {
+    link: InternalLink;
+    onReceive: LinkCallback;
 
-    constructor(onReceive: (data: Uint8Array, link: Link) => void) {
-        this.onReceive = onReceive;
+    connect(link: InternalLink) {
+        if (!this.link) {
+            this.link = link;
+    
+            link.connect(this);
+        }
     }
 
-    connect(connectable: Connectable) {
-        if (!this.link) {
-            if (connectable instanceof Link) {
-                this.link = connectable;
-            } 
-            else {
-                this.link = connectable.link;
-            }
-    
-            connectable.connect(this);
-        }
+    register(callback: LinkCallback) {
+        this.onReceive = callback;
     }
 
     isConnected() {
@@ -37,6 +33,6 @@ export class Link implements Connectable {
     }
 
     receive(data: Uint8Array) {
-        this.onReceive(data, this);
+        this.onReceive(data);
     }
 }
