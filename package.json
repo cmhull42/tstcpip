@@ -8,7 +8,8 @@
     "scripts": {
         "run-listener": "ts-node src/cli/tester.ts -p 9000 -m 0A:00:00:00:00:01 -i 10.0.0.2 -e http://localhost:9001",
         "run-transmitter": "ts-node src/cli/tester2.ts -p 9001 -m 0A:00:00:00:00:02 -i 10.0.0.3 -e http://localhost:9000",
-        "run-interactive": "ts-node src/cli/fake_bash.ts -p 9001 -m 0A:00:00:00:00:03 -i 10.0.0.3 -e http://localhost:9000",
+        "run-interactive": "ts-node src/cli/fake_bash.ts -p 9006 -m 0A:00:00:00:00:03 -i 10.0.0.3 -e http://localhost:9001",
+        "debug-sedna": "ts-node src/cli/fake_bash.ts -p 9001 -m 0A:00:00:00:00:02 -i 10.0.0.4 -e http://sedna.connoor.io:9006",
         "build": "tsc",
         "watch": "tsc -w",
         "test": "jest"
