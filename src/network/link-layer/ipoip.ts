@@ -57,6 +57,7 @@ class IPOIPAccessor {
         app.use(bodyparser.json());
 
         app.get('/health', (req, res) => {
+            console.log("WAT");
             res.status(204).send();
         });
 
