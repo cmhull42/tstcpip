@@ -56,7 +56,7 @@ export function serialize<T>(data: T, defs: FieldDefinition[]): Uint8Array {
     return out;
 }
 
-function calculateObjectWidth<T>(data: T, defs: FieldDefinition[]) {
+export function calculateObjectWidth<T>(data: T, defs: FieldDefinition[]) {
     return defs.reduce((prev, curr) => {
         return prev + getFieldWidth(data, curr, defs)
     }, 0)

@@ -1,4 +1,4 @@
-import { IPV4Header } from "../../src/models/internet-layer/ip";
+import * as ip from "../../src/models/internet-layer/ip";
 import { Ipv4Protocol } from "../../src/network/internet-layer/ipv4"
 import { EthernetNIC } from "../../src/network/link-layer/ethernet"
 import { InternalLink } from "../../src/network/link-layer/link";
@@ -38,7 +38,7 @@ describe("IPV4 Protocol", () => {
             0xc0, 0xa8, 0x00, 0xc7
         ]);
 
-        const checksum = IPV4Header.calculateChecksum(payload);
+        const checksum = ip.calculateChecksum(payload);
         expect(checksum).toBe(0xB861);
     });
 });

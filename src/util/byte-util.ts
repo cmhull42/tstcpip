@@ -42,3 +42,13 @@ export function unsignedNumberToBytes(num: number, width: number): Uint8Array {
             return buff;
     }
 }
+
+export function hashCode(obj: string) {
+    var hash = 0;
+    for (var i = 0; i < obj.length; i++) {
+        var character = obj.charCodeAt(i);
+        hash = ((hash<<5)-hash)+character;
+        hash = hash & hash; // Convert to 32bit integer
+    }
+    return hash;
+}

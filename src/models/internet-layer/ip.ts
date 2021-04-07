@@ -82,24 +82,19 @@ class _IPV4Packet extends Packet<IPV4> {
     constructor() {
         super(IPV4_HEADER_PACKET_DEFINITION);
     }
-
-    getWidth() {
-        return IPV4_HEADER_PACKET_DEFINITION
-            .reduce((prev, curr) => prev + (curr.widthBytes as number), 0);
-    }
-
-    calculateChecksum(header: Uint8Array) {
-        let checksum = 0
-        for (let i=0; i < this.getWidth() / 2; i++) {
-            const offset = i * 2;
-            const word = header.slice(offset, offset + 2)
-            const res = checksum + bytesToUnsignedNumber(word);
-
-            checksum = (res & 0b01111111111111111) + (res >> 16);
-        }
-
-        return ((~checksum) & 0x000000000000FFFF) >>> 0
-    }
 }
 
 export const IPV4Header = new _IPV4Packet();
+
+export function calculateChecksum(data: Uint8Array) {
+    let checksum = 0
+    for (let i=0; i < data.byteLength / 2; i++) {
+        const offset = i * 2;
+        const word = data.slice(offset, offset + 2)
+        const res = checksum + bytesToUnsignedNumber(word);
+
+        checksum = (res & 0b01111111111111111) + (res >> 16);
+    }
+
+    return ((~checksum) & 0x000000000000FFFF) >>> 0;
+}

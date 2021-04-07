@@ -1,10 +1,14 @@
-import { FieldDefinition, serialize, deserialize } from "../util/fixed-width-util";
+import { FieldDefinition, serialize, deserialize, calculateObjectWidth } from "../util/fixed-width-util";
 
 export class Packet<T> {
     definition: FieldDefinition[];
 
     constructor(definition: FieldDefinition[]) {
         this.definition = definition;
+    }
+
+    getWidth<T>(partialObj: T): number {
+        return calculateObjectWidth(partialObj, this.definition);
     }
 
     toWireFormat(obj: T): Uint8Array {

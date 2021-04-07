@@ -1,0 +1,18 @@
+{
+    "ipoip": {
+        "profiles": {
+            "sender1": {
+                "mac": "0A:00:00:00:00:01",
+                "addr": "127.0.0.1",
+                "port": "9000",
+                "remote": "http://localhost:9001"
+            },
+            "sender2": {
+                "mac": "0A:00:00:00:00:02",
+                "addr": "127.0.0.1",
+                "port": "9001",
+                "remote": "http://localhost:9002"
+            }
+        }
+    } 
+}

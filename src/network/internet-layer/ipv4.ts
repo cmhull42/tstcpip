@@ -38,7 +38,7 @@ export class Ipv4Protocol {
             versionIHL: 0b01000101,
             // 000000 -> default dscp class, 00 -> no ECN
             dscpECN: 0b00000000,
-            totalLength: ip.IPV4Header.getWidth() + payload.byteLength,
+            totalLength: ip.IPV4Header.getWidth(null) + payload.byteLength,
             identification: datagramId,
             // 000 -> reserve, DF, MF, 0000000000000 -> frag offset
             // TODO implement fragmenting
@@ -51,12 +51,12 @@ export class Ipv4Protocol {
         };
 
         const header = ip.IPV4Header.toWireFormat(model);
-        const checksum = ip.IPV4Header.calculateChecksum(header);
+        const checksum = ip.calculateChecksum(header);
         header.set(unsignedNumberToBytes(checksum, 2), 10);
 
         const wire = Buffer.alloc(model.totalLength);
         wire.set(header);
-        wire.set(payload, ip.IPV4Header.getWidth());
+        wire.set(payload, ip.IPV4Header.getWidth(model));
 
         this.nic.send(destHardwareAddr, wire, EtherType.IPV4);
     }
@@ -69,29 +69,29 @@ export class Ipv4Protocol {
         this.registry.set(protocol, interceptor);
     }
 
-    private getWaitFor(localAddr: ip.IPV4Address, remoteAddr: ip.IPV4Address, protocol) {
+    private getWaitFor(localAddr: ip.IPV4Address, remoteAddr: ip.IPV4Address, protocol: number) {
         return this.waitPool.get(`${ip.toString(remoteAddr)}-${ip.toString(localAddr)}-${protocol}`);
     }
 
-    private putWaitFor(localAddr: ip.IPV4Address, remoteAddr: ip.IPV4Address, protocol, callback: (payload: Uint8Array) => void) {
+    private putWaitFor(localAddr: ip.IPV4Address, remoteAddr: ip.IPV4Address, protocol: number, callback: (payload: Uint8Array) => void) {
         return this.waitPool.set(`${ip.toString(remoteAddr)}-${ip.toString(localAddr)}-${protocol}`, callback);
     }
 
     private receive(packet: Uint8Array) {
         const header = ip.IPV4Header.toModel(packet);
-        const headerWidth = ip.IPV4Header.getWidth();
+        const headerWidth = ip.IPV4Header.getWidth(null);
         const payload = packet.slice(headerWidth);
 
-        const checksum = ip.IPV4Header.calculateChecksum(packet.slice(0, headerWidth));
+        const checksum = ip.calculateChecksum(packet.slice(0, headerWidth));
         if (checksum != 0) {
             return;
         }
 
-        const interceptor = this.registry.get(header.protocol);
-        if (interceptor) {
-            interceptor(payload);
+        const entry = this.registry.get(header.protocol);
+        if (entry) {
+            entry(payload, header.sourceIPAddr);
         }
     }
 }
 
-export type Interceptor = (payload: Uint8Array) => any;
+export type Interceptor = (payload: Uint8Array, sender: ip.IPV4Address) => any;

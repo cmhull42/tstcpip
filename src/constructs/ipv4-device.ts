@@ -1,4 +1,4 @@
-import { parse } from "path";
+import { ICMPProtocol } from "../network/internet-layer/icmp";
 import { Ipv4Protocol } from "../network/internet-layer/ipv4";
 import { EthernetNIC } from "../network/link-layer/ethernet";
 import { Link } from "../network/link-layer/link";
@@ -9,6 +9,7 @@ export class Ipv4OverEthernet {
     ipv4Addr: Uint8Array;
     nic: EthernetNIC;
     ipv4: Ipv4Protocol;
+    icmp: ICMPProtocol;
 
     constructor(port1: Link, macAddr: string, ipv4Addr: string) {
         this.port1 = port1;
@@ -17,6 +18,11 @@ export class Ipv4OverEthernet {
 
         this.nic = new EthernetNIC(this.macAddr, this.port1);
         this.ipv4 = new Ipv4Protocol(this.nic, this.ipv4Addr);
+        this.icmp = new ICMPProtocol(this.ipv4, 1);
+    }
+
+    async ping(ipv4Addr: string, payload?: string) {
+        await this.icmp.echo_request(parseIpv4Addr(ipv4Addr), payload);
     }
 }
 
