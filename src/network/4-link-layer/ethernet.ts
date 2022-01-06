@@ -1,5 +1,5 @@
 import { crc32 } from "crc";
-import ethernet, { Ethernet, EthernetHeader, EtherType } from "../../models/link-layer/ethernet";
+import ethernet, { Ethernet, EthernetHeader, EtherType } from "../../models/4-link-layer/ethernet";
 import { isEqual } from "../../util/byte-util";
 import { Link } from "./link";
 import { MACAddress, NIC, NICType, PacketInterrupt, Payload } from "./network-interface";

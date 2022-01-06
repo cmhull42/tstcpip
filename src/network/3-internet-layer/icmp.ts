@@ -1,6 +1,6 @@
-import { ICMPHeader, ICMPRequestReplyHeader, ICMPType } from "../../models/internet-layer/icmp";
+import { ICMPHeader, ICMPRequestReplyHeader, ICMPType } from "../../models/3-internet-layer/icmp";
 import { Ipv4Protocol } from "./ipv4";
-import * as ip from "../../models/internet-layer/ip";
+import * as ip from "../../models/3-internet-layer/ip";
 import { TextEncoder, TextDecoder } from "util";
 
 export class ICMPProtocol {

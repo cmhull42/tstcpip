@@ -1,6 +1,6 @@
 import { Args, main } from ".";
 import { Ipv4OverEthernet } from "../constructs/ipv4-device";
-import { IPOIPLink } from "../network/link-layer/ipoip";
+import { IPOIPLink } from "../network/4-link-layer/ipoip";
 
 async function ipoip(args: Args) {
     const link1 = new IPOIPLink(args.port.toString());

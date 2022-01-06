@@ -1,5 +1,5 @@
 import LRU from "lru-cache";
-import { IPV4Address, toString } from "../../models/internet-layer/ip";
+import { IPV4Address, toString } from "../../models/3-internet-layer/ip";
 
 const MAXIMUM_DATAGRAM_LIFETIME_MS = 1000 * 60 * 2;
 

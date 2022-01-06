@@ -1,9 +1,9 @@
 import { Ipv4OverEthernet } from "../constructs/ipv4-device";
-import { IPOIPLink } from "../network/link-layer/ipoip";
+import { IPOIPClientLink } from "../network/4-link-layer/ipoip";
 import { Args, main } from ".";
 
 async function ipoip(args: Args) {
-    const link1 = new IPOIPLink(args.port.toString());
+    const link1 = new IPOIPClientLink(args.port.toString());
 
     const device1 = new Ipv4OverEthernet(link1, args.mac, args.ip);
     console.log(`Built device with hwaddr: <${args.mac}>, netaddr: <${args.ip}>`)

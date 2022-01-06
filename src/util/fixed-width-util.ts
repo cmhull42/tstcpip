@@ -6,7 +6,8 @@ export enum FieldType {
     /** Supports up to 32 bit unsigned ints */
     UNSIGNED_NUMBER,
     SIGNED_NUMBER,
-    STRING
+    STRING,
+    NONE // padding or other data we dont care about getting on the model.
 }
 
 export type WidthType = number | "calculated";
@@ -34,7 +35,9 @@ export function deserialize<T>(data: Uint8Array, defs: FieldDefinition[]): T {
         }
 
         const range = data.slice(offset, offset + width);
-        out[def.name] = readField(range, def);
+        if (def.fieldType != FieldType.NONE) {
+            out[def.name] = readField(range, def);
+        }
         offset += width;
     });
 

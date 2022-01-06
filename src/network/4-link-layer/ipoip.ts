@@ -3,7 +3,7 @@ import express from "express";
 import bodyparser from "body-parser";
 import { Link, LinkCallback } from "./link";
 
-export class IPOIPLink implements Link {
+export class IPOIPClientLink implements Link {
     callback: LinkCallback;
     ipoip: IPOIPAccessor;
     port: string;
@@ -26,6 +26,12 @@ export class IPOIPLink implements Link {
 
         this.ipoip.startListen(this.port, this.callback)
     }
+}
+
+export class IPOIPEthernetRouterLink implements Link {
+    send: (data: Uint8Array) => void | Promise<void>;
+    register: (callback: LinkCallback) => void;
+    callback: LinkCallback;
 }
 
 class IPOIPAccessor {

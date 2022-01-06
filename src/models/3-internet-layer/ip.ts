@@ -98,3 +98,10 @@ export function calculateChecksum(data: Uint8Array) {
 
     return ((~checksum) & 0x000000000000FFFF) >>> 0;
 }
+
+export interface CIDR {
+    prefix: IPV4Address,
+    mask: number
+}
+
+export const BROADCAST_ADDRESS: IPV4Address = Buffer.from([255, 255, 255, 255])

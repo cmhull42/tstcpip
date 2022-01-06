@@ -1,6 +1,6 @@
-import { EthernetNIC } from "../../src/network/link-layer/ethernet"
+import { EthernetNIC } from "../../src/network/4-link-layer/ethernet"
 import { TextDecoder } from "util";
-import { InternalLink } from "../../src/network/link-layer/link";
+import { InternalLink } from "../../src/network/4-link-layer/link";
 describe("Ethernet protocol", () => {
 
     it("Can receive correctly addressed packets", () => {

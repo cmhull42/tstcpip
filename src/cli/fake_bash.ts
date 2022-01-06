@@ -1,45 +1,36 @@
 import { Args, main } from ".";
-import { Ipv4OverEthernet } from "../constructs/ipv4-device";
-import { IPOIPLink } from "../network/link-layer/ipoip";
+import { IPConfigurationMap, Ipv4OverEthernet } from "../constructs/ipv4-device";
+import { IPOIPClientLink } from "../network/4-link-layer/ipoip";
 import * as readline from "readline";
 import yargs from "yargs";
+import { Functions } from "./functions";
 
 async function notbash(args: Args) {
-  const link1 = new IPOIPLink(args.port.toString());
+  const link1 = new IPOIPClientLink(args.port.toString());
 
-  const device = new Ipv4OverEthernet(link1, args.mac, args.ip);
+  const config: IPConfigurationMap = {
+    "0A:00:00:00:00:01": {
+      ipAllocation: { 
+        static: {
+          ipv4Address: "10.0.0.2",
+          cidr: {
+            prefix: "10.0.0.0",
+            mask: 24
+          },
+          defaultGateway: "10.0.0.1"
+        } 
+      },
+      link: link1
+    }
+  }
+
+  const device = new Ipv4OverEthernet(config);
   console.log(`Built device with hwaddr: <${args.mac}>, netaddr: <${args.ip}>`)
 
   link1.connect(args.endpoint);
   console.log(`IPOIP - Connected to ${args.endpoint}`);
 
-  const ping = async (args) => {
-    const parsed = yargs(args)
-      .describe("p", "Payload to send with the echo request. If absent a payload of length 1024 will be generated")
-      .alias("p", "payload")
-      .describe("t", "Ttl of the echo request")
-      .alias("t", "ttl")
-      .usage("ping <addr>")
-      .demandCommand(1)
-      .exitProcess(false)
-      .argv;
-
-    const pingAddr = parsed._[0].toString();
-    const payload = parsed.p as string;
-    console.log(`Pinging device at <${pingAddr}> with payload ${payload}`);
-  
-    try {
-      await device.ping(pingAddr, payload);
-    }
-    catch (err) {
-      console.log(err.message)
-    }
-  }
-
-  const commands = {
-    "help": (args) => console.log(`commands: ${Object.keys(commands).join(",")}`),
-    "ping": ping
-  }
+  const commands = Functions.all();
 
   while (true) {
     const line = await prompt();

@@ -1,6 +1,6 @@
-import { ARP, ARPPacket, ARP_OPERATION } from "../../src/models/link-layer/arp";
-import { ArpService } from "../../src/network/link-layer/arp";
-import { NICType } from "../../src/network/link-layer/network-interface";
+import { ARP, ARPPacket, ARP_OPERATION } from "../../src/models/4-link-layer/arp";
+import { ArpService } from "../../src/network/4-link-layer/arp";
+import { NICType } from "../../src/network/4-link-layer/network-interface";
 
 const mockBroadcast = jest.fn();
 const mockSend = jest.fn();

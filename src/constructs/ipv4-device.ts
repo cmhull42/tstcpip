@@ -1,28 +1,84 @@
-import { ICMPProtocol } from "../network/internet-layer/icmp";
-import { Ipv4Protocol } from "../network/internet-layer/ipv4";
-import { EthernetNIC } from "../network/link-layer/ethernet";
-import { Link } from "../network/link-layer/link";
+import { CIDR, IPV4Address } from "../models/3-internet-layer/ip";
+import { ICMPProtocol } from "../network/3-internet-layer/icmp";
+import { Ipv4Protocol } from "../network/3-internet-layer/ipv4";
+import { EthernetNIC } from "../network/4-link-layer/ethernet";
+import { Link } from "../network/4-link-layer/link";
+
+export interface IPConfigurationMap {
+    [macAddr: string]: IPConfiguration
+}
+
+interface IPConfiguration {
+    ipAllocation: StaticAllocation | DynamicAllocation,
+    link: Link
+}
+
+export enum AllocationTypes {
+    STATIC = "STATIC",
+    DYNAMIC = "DYNAMIC"
+}
+
+export interface StaticAllocation {
+    allocationType: AllocationTypes.STATIC,
+    ipv4Address: string,
+    cidr: { prefix: string, mask: number },
+    defaultGateway: string
+}
+
+export interface DynamicAllocation {
+    allocationType: AllocationTypes.DYNAMIC
+}
+
+interface NetworkingStack {
+    nic: EthernetNIC,
+    ipv4: Ipv4Protocol,
+    icmp: ICMPProtocol
+}
 
 export class Ipv4OverEthernet {
-    port1: Link;
-    macAddr: Uint8Array;
-    ipv4Addr: Uint8Array;
-    nic: EthernetNIC;
-    ipv4: Ipv4Protocol;
-    icmp: ICMPProtocol;
 
-    constructor(port1: Link, macAddr: string, ipv4Addr: string) {
-        this.port1 = port1;
-        this.macAddr = parseMacAddr(macAddr);
-        this.ipv4Addr = parseIpv4Addr(ipv4Addr);
+    private readonly stacks = new Map<string, NetworkingStack>();
 
-        this.nic = new EthernetNIC(this.macAddr, this.port1);
-        this.ipv4 = new Ipv4Protocol(this.nic, this.ipv4Addr);
-        this.icmp = new ICMPProtocol(this.ipv4, 1);
+    constructor(ipConfig: IPConfigurationMap) {
+        for (const mac of Object.keys(ipConfig)) {
+            this.stacks.set(mac, this.buildNetworkingStack(mac, ipConfig[mac]));
+        }
+    }
+
+    private findInterface(ipv4Addr: string): NetworkingStack {
+        return null;
+    }
+
+    private buildNetworkingStack(mac: string, ipConfig: IPConfiguration): NetworkingStack {
+        const hwAddr = parseMacAddr(mac);
+        const nic = new EthernetNIC(hwAddr, ipConfig.link);
+
+        let protocolAddr: IPV4Address = null;
+
+        const ipAlloc = ipConfig.ipAllocation;
+        if (ipAlloc.allocationType === AllocationTypes.STATIC) {
+            protocolAddr = parseIpv4Addr(ipAlloc.ipv4Address);
+        }
+        else {
+            protocolAddr = Buffer.from([0, 0, 0, 0]);
+        }
+
+        const ipv4 = new Ipv4Protocol(nic, protocolAddr);
+        const icmp = new ICMPProtocol(ipv4, 1);
+
+        return { nic, ipv4, icmp }
     }
 
     async ping(ipv4Addr: string, payload?: string) {
-        await this.icmp.echo_request(parseIpv4Addr(ipv4Addr), payload);
+        const iface = this.findInterface(ipv4Addr);
+
+        await iface.icmp.echo_request(parseIpv4Addr(ipv4Addr), payload);
+    }
+
+    arp_cache(): {ip: string, hwaddr: string}[] {
+        return Array.from(this.stacks.values())
+            .flatMap(stack => Array.from(stack.ipv4.get_arp_cache()))
+            .map(([ip, mac]) => ({ ip, hwaddr: mac.toString() }));
     }
 }
 

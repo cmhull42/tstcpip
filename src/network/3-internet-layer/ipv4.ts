@@ -1,19 +1,19 @@
-import { EtherType } from "../../models/link-layer/ethernet";
-import * as ip from "../../models/internet-layer/ip";
+import { EtherType } from "../../models/4-link-layer/ethernet";
+import * as ip from "../../models/3-internet-layer/ip";
 import { unsignedNumberToBytes } from "../../util/byte-util";
-import { ArpService } from "../link-layer/arp";
-import { MACAddress, NIC } from "../link-layer/network-interface";
+import { ArpService } from "../4-link-layer/arp";
+import { MACAddress, NIC } from "../4-link-layer/network-interface";
 import { getDatagramId } from "./datagram-id";
 
 export class Ipv4Protocol {
-    private nic: NIC;
-    private ipv4Addr: ip.IPV4Address;
+    public nic: NIC;
+    private ipv4Addr: ip.IPV4Address | Promise<ip.IPV4Address>;
     private arpCache = new Map<string, MACAddress>();
     private arpService: ArpService;
     private registry = new Map<number, Interceptor>();
     private waitPool = new Map<string, ((resp: Uint8Array) => void)>();
 
-    constructor(nic: NIC, ipv4Addr: ip.IPV4Address) {
+    constructor(nic: NIC, ipv4Addr: ip.IPV4Address | Promise<ip.IPV4Address>) {
         this.nic = nic;
         this.ipv4Addr = ipv4Addr;
         this.arpService = new ArpService(this.nic, ipv4Addr);
@@ -26,6 +26,7 @@ export class Ipv4Protocol {
         if (!destHardwareAddr) {
             try {
                 destHardwareAddr = await this.arpService.request(destinationAddress);
+                this.arpCache.set(ip.toString(destinationAddress), destHardwareAddr);
             }
             catch (err) {
                 throw new Error("NOSUCHADDRESS");
@@ -91,6 +92,10 @@ export class Ipv4Protocol {
         if (entry) {
             entry(payload, header.sourceIPAddr);
         }
+    }
+
+    public get_arp_cache(): Map<string, MACAddress> {
+        return this.arpCache;
     }
 }
 

@@ -1,4 +1,4 @@
-import { MACAddress } from "../../network/link-layer/network-interface";
+import { MACAddress } from "../../network/4-link-layer/network-interface";
 import { isEqual } from "../../util/byte-util";
 import { ByteField, FieldDefinition, FieldType } from "../../util/fixed-width-util";
 import { Packet } from "../packet";

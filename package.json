@@ -6,7 +6,7 @@
         "network-test": "dist/cli/tester.js"
     },
     "scripts": {
-        "run-listener": "ts-node src/cli/tester.ts -p 9000 -m 0A:00:00:00:00:01 -i 10.0.0.2 -e http://localhost:9001",
+        "run-listener": "ts-node src/cli/tester.ts -p 9001 -m 0A:00:00:00:00:01 -i 10.0.0.2 -e http://localhost:9006",
         "run-transmitter": "ts-node src/cli/tester2.ts -p 9001 -m 0A:00:00:00:00:02 -i 10.0.0.3 -e http://localhost:9000",
         "run-interactive": "ts-node src/cli/fake_bash.ts -p 9006 -m 0A:00:00:00:00:03 -i 10.0.0.3 -e http://localhost:9001",
         "connect-sedna": "ts-node src/cli/fake_bash.ts -p 9001 -m 0A:00:00:00:00:01 -i 10.0.0.1 -e http://sedna.connoor.io:9006",
@@ -23,6 +23,7 @@
         "got": "^11.7.0",
         "jest-cli": "^26.6.3",
         "lru-cache": "^6.0.0",
+        "uuid": "^8.3.2",
         "yargs": "^16.2.0"
     },
     "devDependencies": {
@@ -31,7 +32,8 @@
         "@types/got": "^9.6.11",
         "@types/jest": "^26.0.22",
         "@types/lru-cache": "^5.1.0",
-        "@types/node": "^14.11.1",
+        "@types/node": "^17.0.5",
+        "@types/uuid": "^8.3.0",
         "@yarnpkg/pnpify": "^2.4.0",
         "jest": "^26.6.3",
         "ts-jest": "^26.3.0",

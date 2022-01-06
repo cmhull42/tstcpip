@@ -1,7 +1,7 @@
-import * as ip from "../../src/models/internet-layer/ip";
-import { Ipv4Protocol } from "../../src/network/internet-layer/ipv4"
-import { EthernetNIC } from "../../src/network/link-layer/ethernet"
-import { InternalLink } from "../../src/network/link-layer/link";
+import * as ip from "../../src/models/3-internet-layer/ip";
+import { Ipv4Protocol } from "../../src/network/3-internet-layer/ipv4"
+import { EthernetNIC } from "../../src/network/4-link-layer/ethernet"
+import { InternalLink } from "../../src/network/4-link-layer/link";
 
 describe("IPV4 Protocol", () => {
     it("Can send over ipv4", async () => {

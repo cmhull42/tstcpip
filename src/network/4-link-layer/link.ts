@@ -1,4 +1,3 @@
-
 export type LinkCallback = (data: Uint8Array) => any;
 
 export interface Link {
